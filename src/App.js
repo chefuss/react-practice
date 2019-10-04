@@ -2,27 +2,12 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-//const value1 = Math.floor(Math.random() * 100);
-//const value2 = Math.floor(Math.random() * 100);
-//const value3 = Math.floor(Math.random() * 100);
-//const proposedAnswer = Math.floor(Math.random() * 3) + value1 + value2 + value3;
-//const numQuestions = 0;
-//const numCorrect = 0;
-//const checkCorrectAnwser = () => {
-  	//if the correct anwser is equal to the proposedAnswer return true
-//    const correct = value1 + value2 + value3;
-//    if (correct === proposedAnswer) {
-//      return true
-//    } else {
-//      return false
-//    }
-    //else return false
-//  };
-
 class App extends Component {
   constructor(props) {
   	super(props);
     const valuesArray = this.makeQuestion();
+    //initial state. random numbers for the values
+    //the numbers comes from the method makeQuestion.
     this.state = {
       	value1: valuesArray[0],
         value2: valuesArray[1],
@@ -30,44 +15,59 @@ class App extends Component {
       	proposedAnswer: valuesArray[3],
       	numQuestions: 0,
       	numCorrect: 0,
-      	
     }
   }
+  //gets the values for the question
   makeQuestion = () => {
   	const value1 = Math.floor(Math.random() * 100);
-	const value2 = Math.floor(Math.random() * 100);
-	const value3 = Math.floor(Math.random() * 100);
-	const proposedAnswer = Math.floor(Math.random() * 3) + value1 + value2 + value3;
-    return [value1, value2, value3, proposedAnswer];
+    const value2 = Math.floor(Math.random() * 100);
+    const value3 = Math.floor(Math.random() * 100);
+    const proposedAnswer = Math.floor(Math.random() * 3) + value1 + value2 + value3;
+      return [value1, value2, value3, proposedAnswer];
   }
-  checkCorrectAnwser = () => {
-    const correct = this.value1 + this.value2 + this.value3;
-    return (correct === this.proposedAnswer) ? true : false;
-  }
+  //gets a new set of numbers.
+  //change the initial state. Updates the state.
   getNewNumbers = newValuesArray => {
-    this.setState(currState => ({
+    this.setState({
       value1: newValuesArray[0],
       value2: newValuesArray[1],
       value3: newValuesArray[2],
       proposedAnswer: newValuesArray[3],
+    });
+  };
+  //changes the state of the number of questions and correct question
+  //if the answer was correct checkCorrectAnwser method
+  answerCorrect = answerWasCorrect => {
+    if (answerWasCorrect) {
+      this.setState(currState => ({
+        numCorrect: currState.numCorrect + 1,
+      }));
+    }
+    this.setState(currState => ({
+      numQuestions: currState.numQuestions + 1,
     }));
   };
-
+  //handles the click event from the buttons
+  //call the answerCorrect method to change the state of questions and correct answers
   handleAnswer = event => {
     const newValuesArray = this.makeQuestion();
     this.getNewNumbers(newValuesArray);
     const answerWasCorrect = this.ifTrue(event.target.name);
-    this.handleAnswer(answerWasCorrect);
+    this.answerCorrect(answerWasCorrect);
   };
-  ifTrue = (givenAnswer) => {
-    const {proposedAnswer} = this.state;
-    const trueValue = this.checkCorrectAnwser();
+  //check if the answer was correct
+  //the inputs takes the true or false value from the event target.
+  ifTrue(givenAnswer) {
+    const {value1, value2, value3, proposedAnswer} = this.state;
+    const correct = value1 + value2 + value3;
+    console.log(correct);
+    
     return (
-      (trueValue === proposedAnswer && givenAnswer === 'true') ||
-      (trueValue !== proposedAnswer && givenAnswer === 'false')
+      (correct === proposedAnswer && givenAnswer === 'true') ||
+        (correct !== proposedAnswer && givenAnswer === 'false')
     );
-  };
- 
+  }
+
   render() {
     const { value1, value2, value3, proposedAnswer } = this.state;
     return (
